@@ -1,0 +1,4 @@
+snake
+*.exe
+*.o
+.vscode/
