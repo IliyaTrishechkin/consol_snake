@@ -62,6 +62,7 @@ int main(int argv, char** argc){
                 mvprintw(0, 0, "%s", items[choice_item]);
                 if(choice_item == 0){
                     main_snake();
+                    timeout(-1);
                 } else if(choice_item == 2){
                     endwin();
                     return 0;

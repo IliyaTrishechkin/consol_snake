@@ -226,5 +226,5 @@ int main_snake(){
     }
 
     endwin();                     // return control
-    return 0;
+    return main_window.count_point;
 }
