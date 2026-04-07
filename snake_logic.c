@@ -111,7 +111,7 @@ void point_check(struct point* point, struct Window* window, struct List* snake,
     }
     return ;
 }
-
+// Graphics
 void game_over(bool flag, struct Window* window){
     if(flag){
         int x = (window->low - strlen(win_game))/2;
@@ -132,14 +132,14 @@ void game_over(bool flag, struct Window* window){
 // checks all barriers or body
 bool check_snake(struct Window* window, struct List* snake){
     if(len_list(snake) >= window->low * window->row){
-        game_over(true, window);
+        game_over(true, window);                            // ADDICTION !!!
         return false;
     }
     struct List* snake_head = snake;
     snake = snake->next;
     while(snake){
         if(snake_head->data.x == snake->data.x && snake_head->data.y == snake->data.y){
-            game_over(false, window);
+            game_over(false, window);                       // ADDICTION !!!
             return false;
         }
         snake = snake->next;
@@ -147,7 +147,7 @@ bool check_snake(struct Window* window, struct List* snake){
     return true;
 }
 
-
+// Graphics
 void write_to_display(struct point* point, struct Window* window, struct List* snake){
     clear(); 
     if(window->color){attrset(COLOR_PAIR(3));}
@@ -164,7 +164,7 @@ void write_to_display(struct point* point, struct Window* window, struct List* s
     refresh();
 }
 
-
+// Logics + Graphics
 int main_snake(){
     srand(time(NULL));
     struct Window main_window;

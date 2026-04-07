@@ -1,4 +1,6 @@
-snake
+snake.exe
+main.exe
 *.exe
 *.o
+setting.txt
 .vscode/
