@@ -7,36 +7,7 @@
 #include "snake_logic.h"
 
 
-enum {time_wait = 100};
-enum {key_escape = 27};
-enum {color_count = 8};
 
-static const int all_colors[color_count] = {
-    COLOR_BLACK, COLOR_RED, COLOR_GREEN, COLOR_YELLOW,
-    COLOR_BLUE, COLOR_MAGENTA, COLOR_CYAN, COLOR_WHITE
-};
-
-const char win_game[] = "You won, but the next update will be coming soon.";
-const char lose_game[] = "You lost. Try again.";
-
-const char snake_char = '*';
-const char point_char = '$';
-
-
-// save all information about window object
-struct Window{
-    int row; // Oy or Y
-    int low; // Ox or X
-    int count_point; // count point
-    bool color; // if terminal can use colors
-};
-
-struct point{
-    int point_x, point_y; // coord apple
-};
-
-
-// generate point(apple)
 void set_point(struct point* point, struct Window* window, struct List* snake){
     int total = window->low * window->row;
     int *occupied = calloc(total, sizeof(int));               // make array
@@ -111,120 +82,21 @@ void point_check(struct point* point, struct Window* window, struct List* snake,
     }
     return ;
 }
-// Graphics
-void game_over(bool flag, struct Window* window){
-    if(flag){
-        int x = (window->low - strlen(win_game))/2;
-        int y = (window->row - 1)/2;
-        if(window->color){attrset(COLOR_PAIR(4));}
-        mvprintw(y, x, "%s", win_game);
-    } else {
-        int x = (window->low - strlen(lose_game))/2;
-        int y = (window->row - 1)/2;
-        if(window->color){attrset(COLOR_PAIR(4));}
-        mvprintw(y, x, "%s", lose_game);
-    }
-    mvprintw(window->row/2+1, window->low/2, "total: %d", window->count_point);
-    refresh();
-    return ;
-}
 
 // checks all barriers or body
-bool check_snake(struct Window* window, struct List* snake){
+enum status_snake check_snake(struct Window* window, struct List* snake){
     if(len_list(snake) >= window->low * window->row){
-        game_over(true, window);                            // ADDICTION !!!
-        return false;
+        //game_over(true, window);                            // ADDICTION !!!
+        return snake_win;
     }
     struct List* snake_head = snake;
     snake = snake->next;
     while(snake){
         if(snake_head->data.x == snake->data.x && snake_head->data.y == snake->data.y){
-            game_over(false, window);                       // ADDICTION !!!
-            return false;
+            //game_over(false, window);                       // ADDICTION !!!
+            return snake_lose;
         }
         snake = snake->next;
     }
-    return true;
-}
-
-// Graphics
-void write_to_display(struct point* point, struct Window* window, struct List* snake){
-    clear(); 
-    if(window->color){attrset(COLOR_PAIR(3));}
-    mvprintw(0, 0, "%d", window->count_point);
-    if(window->color){attrset(COLOR_PAIR(1));}
-    while(snake){
-        move(snake->data.y, snake->data.x);
-        addch(snake_char);
-        snake = snake->next;
-    }
-    if(window->color){attrset(COLOR_PAIR(2));}
-    move(point->point_y, point->point_x);
-    addch(point_char);
-    refresh();
-}
-
-// Logics + Graphics
-int main_snake(){
-    srand(time(NULL));
-    struct Window main_window;
-    main_window.count_point = 0;  
-    struct point point; 
-    int key; 
-    initscr();                    // init
-    cbreak();                     // disables input buffering
-    timeout(time_wait);           // press wait time
-    keypad(stdscr, 1);            // setting keyboard
-    noecho();                     // disables show input
-    curs_set(0);                  // delete cursor
-    main_window.color = has_colors();
-    if(main_window.color){
-        start_color();
-        // 1 number pair, 2 color text, 3 color background
-        init_pair(1, all_colors[3], all_colors[6]); // snake
-        init_pair(2, all_colors[1], all_colors[0]); // point
-        init_pair(3, all_colors[2], all_colors[0]); // text progress
-        init_pair(4, all_colors[1], all_colors[4]); // End or win game
-    }
-    getmaxyx(stdscr, main_window.row, main_window.low);
-    struct List* snake = initialize((type){main_window.low/2, main_window.row/2, up});
-    enum direction direction =  up;
-    set_point(&point, &main_window, snake);switch(snake->data.direction){
-        case up:    snake->data.y--; break;
-        case down:  snake->data.y++; break;
-        case left:  snake->data.x--; break;
-        case right: snake->data.x++; break;
-    }
-    while((key = getch()) != key_escape){
-        switch(key){
-        case KEY_UP:
-            direction = up;
-            break;
-        case KEY_DOWN:
-            direction = down;
-            break;
-        case KEY_LEFT:
-            direction = left;
-            break;
-        case KEY_RIGHT:
-            direction = right;
-            break;
-        case ERR:
-            break;
-        case KEY_RESIZE:
-            getmaxyx(stdscr, main_window.row, main_window.low);
-            set_point(&point, &main_window, snake);
-            break;
-        }
-        move_snake(direction, &main_window, snake);
-        point_check(&point, &main_window, snake, direction);
-        if(!check_snake(&main_window, snake)){
-            sleep(5);
-            break;
-        }
-        write_to_display(&point, &main_window, snake);
-    }
-
-    endwin();                     // return control
-    return main_window.count_point;
+    return snake_none;
 }
