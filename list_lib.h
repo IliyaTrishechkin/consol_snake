@@ -3,7 +3,6 @@
 enum direction{up, down, left, right};
 typedef struct coord_snake{
     int x, y;
-    enum direction direction;
 } type;
 
 struct List{
