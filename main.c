@@ -199,6 +199,37 @@ static void show_list_options(const int height, const int wigth, const int choce
 }
 
 
+static void write_snake(const bool flg, struct List* snake, const struct setting_char* setting_char){
+    if(flg){
+        move(snake->data.y, snake->data.x);
+        attrset(COLOR_PAIR(snake_color));
+        addch(setting_char->snake_char);
+    } else {
+        struct List* end = get_last(snake);
+        move(end->data.y, end->data.x);
+        attrset(COLOR_PAIR(0));
+        addch(' ');
+    }
+    return ;
+}
+
+
+static void write_point(const bool flg, const struct point* point, const struct Window* window, const struct setting_char* setting_char){
+    if(flg){
+        attrset(COLOR_PAIR(point_color));
+        move(point->point_y, point->point_x);
+        addch(setting_char->point_char);
+        attrset(COLOR_PAIR(text_color));
+        mvprintw(0, 0, "%d", window->count_point);
+    } else {
+        attrset(COLOR_PAIR(0));
+        move(point->point_y, point->point_x);
+        addch(' ');
+    }
+    return ;
+}
+
+
 static void write_to_display(const struct point* point, const struct Window* window, struct List* snake, const struct setting_char* setting_char){
     clear();
     attrset(COLOR_PAIR(text_color));
@@ -412,18 +443,23 @@ int main_snake(struct setting_char* setting_char){
     }
     */
     int key;
+    write_to_display(&point, &main_window, snake, setting_char);
     while((key = getch()) != key_escape){
         switch(key){
         case KEY_UP:
+            if(direction == down) break;
             direction = up;
             break;
         case KEY_DOWN:
+            if(direction == up) break;
             direction = down;
             break;
         case KEY_LEFT:
+            if(direction == right) break;
             direction = left;
             break;
         case KEY_RIGHT:
+            if(direction == left) break;
             direction = right;
             break;
         case ERR:
@@ -433,15 +469,21 @@ int main_snake(struct setting_char* setting_char){
             set_point(&point, &main_window, snake);
             break;
         }
+        write_snake(false, snake, setting_char);
         move_snake(direction, &main_window, snake);
-        point_check(&point, &main_window, snake, direction);
+        if(point_check(&point, &main_window, snake, direction)){
+            write_point(true, &point, &main_window, setting_char);
+        }
+        //write_point(true, &point, &main_window, setting_char);
+        write_snake(true, snake, setting_char);
         enum status_snake status_snake = check_snake(&main_window, snake);
         if(status_snake == snake_win || status_snake == snake_lose){
             game_over(status_snake, &main_window);
             sleep(5);
             return main_window.count_point;
         }
-        write_to_display(&point, &main_window, snake, setting_char);
+        refresh();
+        //write_to_display(&point, &main_window, snake, setting_char);
     }
 
     return main_window.count_point;

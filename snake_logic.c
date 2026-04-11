@@ -58,7 +58,7 @@ void move_snake(enum direction direction, struct Window* window, struct List* sn
 }
 
 
-void point_check(struct point* point, struct Window* window, struct List* snake, enum direction direction){
+bool point_check(struct point* point, struct Window* window, struct List* snake, enum direction direction){
     if(snake->data.x == point->point_x && snake->data.y == point->point_y){
         int len = len_list(snake);
         if(len == 1){
@@ -70,15 +70,16 @@ void point_check(struct point* point, struct Window* window, struct List* snake,
             }
             window->count_point += 1;                                       // add point
             set_point(point, window, snake);                                // new point
-            return ;
+            return true;
         }
         struct List* tail = get_last(snake);
         struct List* second_tail = iteration(snake, len-1);
         push_back(snake, (type){tail->data.x - (second_tail->data.x - tail->data.x), tail->data.y - (second_tail->data.y - tail->data.y)});
         window->count_point += 1;                                           // add point
         set_point(point, window, snake);                                    // new point
+        return true;
     }
-    return ;
+    return false;
 }
 
 // checks all barriers or body

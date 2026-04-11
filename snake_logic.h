@@ -16,7 +16,7 @@ struct point{
 
 void set_point(struct point* point, struct Window* window, struct List* snake);
 void move_snake(enum direction direction, struct Window* window, struct List* snake);
-void point_check(struct point* point, struct Window* window, struct List* snake, enum direction direction);
+bool point_check(struct point* point, struct Window* window, struct List* snake, enum direction direction);
 enum status_snake check_snake(struct Window* window, struct List* snake);
 
 #endif
