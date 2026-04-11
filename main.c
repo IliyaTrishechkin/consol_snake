@@ -14,7 +14,7 @@ enum color_name {BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, color_co
 
 static const char win_game[] = "You won, but the next update will be coming soon.";
 static const char lose_game[] = "You lost. Try again.";
-static const char error_file[] = "There is a problem with the file. Please delete it.";
+static const char error_file[] = "There is a problem with the file.";
 static const char file_name[] = "setting.txt";
 
 
@@ -495,12 +495,7 @@ int main(int argv, char** argc){
     struct user user;
     struct color color;
 
-    bool flg = setting_file(file_name, &setting_char, &user, &color);
-
-    if(flg){
-        printf("%s '%s'\n", error_file, file_name);
-        return -1;
-    }
+    setting_file(file_name, &setting_char, &user, &color);
 
     srand(time(NULL));
     initscr();                      // init
