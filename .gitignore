@@ -4,3 +4,5 @@ main.exe
 *.o
 setting.txt
 .vscode/
+main
+snake

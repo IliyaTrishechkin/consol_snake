@@ -11,6 +11,24 @@ struct List* initialize(type n){
 }
 
 
+struct List* array_to_List(const type *arr, int len){
+    int i = 0;
+    struct List *tmp, *first = NULL, *last = NULL;
+    for(i = 0; i < len; i++){
+        tmp = malloc(sizeof(struct List));
+        tmp->data = arr[i];
+        tmp->next = NULL;
+        if(last){
+            last->next = tmp;
+            last = last->next;
+        } else {
+            last = first = tmp;
+        }
+    }
+    return first;
+}
+
+
 void delete_List(struct List* first){
     while(first){
         struct List* tmp = first->next;

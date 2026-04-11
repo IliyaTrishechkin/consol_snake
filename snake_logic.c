@@ -1,8 +1,6 @@
 #include <ncurses.h>
 #include <stdlib.h>         // for random number to point
 #include <time.h>           // for random number to point
-#include <unistd.h>
-#include <string.h>
 #include "list_lib.h"       // I used list for snake
 #include "snake_logic.h"
 
@@ -86,14 +84,12 @@ void point_check(struct point* point, struct Window* window, struct List* snake,
 // checks all barriers or body
 enum status_snake check_snake(struct Window* window, struct List* snake){
     if(len_list(snake) >= window->low * window->row){
-        //game_over(true, window);                            // ADDICTION !!!
         return snake_win;
     }
     struct List* snake_head = snake;
     snake = snake->next;
     while(snake){
         if(snake_head->data.x == snake->data.x && snake_head->data.y == snake->data.y){
-            //game_over(false, window);                       // ADDICTION !!!
             return snake_lose;
         }
         snake = snake->next;
